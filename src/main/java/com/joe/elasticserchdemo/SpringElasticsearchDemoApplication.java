@@ -8,7 +8,5 @@ public class SpringElasticsearchDemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringElasticsearchDemoApplication.class, args);
-	}
-
-	
+	}	
 }
