@@ -68,10 +68,6 @@ public class StoreDoc extends EsDoc implements Serializable {
 		this.fullText = fullText;
 	}
 	
-	
-	
-	
-	
 
 	@Override
 	public String toString() {

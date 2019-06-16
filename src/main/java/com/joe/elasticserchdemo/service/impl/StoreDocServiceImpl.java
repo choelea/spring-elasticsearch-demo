@@ -9,7 +9,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.ConstantScoreQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.joe.elasticserchdemo.document.StoreDoc;
 import com.joe.elasticserchdemo.service.StoreDocService;
@@ -67,11 +65,13 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		BoolQueryBuilder boolQueryBuilder= QueryBuilders.boolQuery();
 		
 		String[] terms = keyword.split("\\s+");
+		float nameBoost = 1.0f/terms.length;
 		for (String term : terms) {			
-			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(StoreDoc._name, term)));
+			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(StoreDoc._name, term)).boost(nameBoost));
 		}
 		searchSourceBuilder.query(boolQueryBuilder); 
 		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).highlighterType("plain"));
+		searchSourceBuilder.minScore(0.7f);
 		
 		searchRequest.source(searchSourceBuilder);
 		
