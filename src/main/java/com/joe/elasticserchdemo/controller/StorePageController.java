@@ -40,4 +40,16 @@ public class StorePageController {
 		return "store/storeNames";
 	}
 
+	@GetMapping("/search-stores-constant-scoring")
+	public String searchStoreConstantScoring(Model model, String keyword) throws IOException {
+		List<StoreDoc> page;
+		if (StringUtils.isEmpty(keyword)) {
+			page = storeDocService.findAll(0, 50);
+		} else {
+			page = storeDocService.searchConstantly(keyword, 0, 30);
+		}
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("page", page);
+		return "store/storeNamesConstantScore";
+	}
 }

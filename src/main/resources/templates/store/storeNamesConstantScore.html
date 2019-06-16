@@ -19,7 +19,7 @@
           <a href="http://tech.jiu-shu.com/" class="logo">旧书 - IT Technologies</a>
         </div>
         <div class="col-sm-3">
-          <form class="search-form form-inline pull-right" action="/page/store-names-closer-better">
+          <form class="search-form form-inline pull-right" action="/page/search-stores-constant-scoring">
             <div class="form-group">
               <label class="sr-only" for="search">搜索</label>
               <input type="text" class="form-control" name="keyword" id="search" size="30" th:value="${keyword}" placeholder="搜索"></input>
@@ -30,9 +30,8 @@
     </div>
   </header>
 	<div class="container">
-	<h1>Search Stores (name only) 越近越高分</h1>
-	<p>参考如下： https://www.elastic.co/guide/cn/elasticsearch/guide/current/_closer_is_better.html 拆分后的单词相隔越近分数越高
-	https://www.elastic.co/guide/cn/elasticsearch/guide/current/proximity-relevance.html</p>
+	<h1>Search Stores (name only) </h1>
+	<p>https://www.elastic.co/guide/en/elasticsearch/reference/6.7/query-dsl-constant-score-query.html#query-dsl-constant-score-query</p>
 	<div class="row col-md-12 table-responsive">
 		<table id="customerTable" class="table">
 			<thead>
@@ -40,6 +39,7 @@
 					<th>Id</th>
 					<th>Name</th>
 					<th>Main Products</th>
+					<th>Score</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -48,6 +48,7 @@
 			        <td th:text="${store.id}"></td>
 					<td th:utext="${store.name}"></td>
 					<td th:utext="${store.mainProducts}"></td>
+					<td th:utext="${store.score}"></td>
 			    </tr>
 			</tbody>
 		</table>

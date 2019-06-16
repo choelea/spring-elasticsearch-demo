@@ -12,6 +12,8 @@ public interface StoreDocService {
 	List<StoreDoc> findAll(int from, int size) throws IOException;
 
 	List<StoreDoc> searchInName(String keyword, int from, int size) throws IOException;
+
+	List<StoreDoc> searchConstantly(String keyword, int from, int size) throws IOException;
 	
 	
 	

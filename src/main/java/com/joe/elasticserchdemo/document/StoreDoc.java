@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.joe.elasticserchdemo.utils.EsMappingProp;
 
-public class StoreDoc implements Serializable {
+public class StoreDoc extends EsDoc implements Serializable {
 
 	/**
 	 * 
@@ -66,19 +67,25 @@ public class StoreDoc implements Serializable {
 	public void setFullText(String fullText) {
 		this.fullText = fullText;
 	}
+	
+	
+	
+	
+	
 
 	@Override
 	public String toString() {
-		return "StoreDoc [id=" + id + ", name=" + name + ", mainProducts=" + mainProducts + "]";
-	}	
-	
+		return "StoreDoc [id=" + id + ", name=" + name + ", mainProducts=" + mainProducts + ", fullText=" + fullText
+				+ "]";
+	}
+
 	@JsonIgnore
 	public static Map<String, Object> getMapping(){
 		Map<String, Object> jsonMap = new HashMap<>();
 				
 		Map<String, Object> properties = new HashMap<>();
 		properties.put(_name, Collections.singletonMap("type", "text"));
-		properties.put(_mainProducts, Collections.singletonMap("type", "text"));
+		properties.put(_mainProducts, new EsMappingProp("text").parameter("analyzer", "english"));
 		properties.put(_fullText, Collections.singletonMap("type", "text"));
 		jsonMap.put("properties", properties);
 		return jsonMap;
