@@ -4,6 +4,8 @@ package com.joe.elasticserchdemo.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.joe.elasticsearchdemo.dto.AggregatedStoreDocPage;
+import com.joe.elasticsearchdemo.dto.Pageable;
 import com.joe.elasticserchdemo.document.StoreDoc;
 
 public interface StoreDocService {
@@ -15,6 +17,7 @@ public interface StoreDocService {
 
 	List<StoreDoc> searchConstantly(String keyword, int from, int size) throws IOException;
 	
+	AggregatedStoreDocPage aggregationSearch(String keyword, Pageable pageable) throws IOException;
 	
 	
 //	Page<StoreDoc> searchInName(String keyword, Pageable pageable);

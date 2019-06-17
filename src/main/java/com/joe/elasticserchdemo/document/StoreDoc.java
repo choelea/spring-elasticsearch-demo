@@ -36,6 +36,10 @@ public class StoreDoc extends EsDoc implements Serializable {
 	private String fullText;
 	public static final String _fullText = "fullText";
 	
+	
+	private int rating;
+	public static final String _rating="rating";
+	
 	public Long getId() {
 		return id;
 	}
@@ -69,6 +73,14 @@ public class StoreDoc extends EsDoc implements Serializable {
 	}
 	
 
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
 	@Override
 	public String toString() {
 		return "StoreDoc [id=" + id + ", name=" + name + ", mainProducts=" + mainProducts + ", fullText=" + fullText
@@ -83,6 +95,7 @@ public class StoreDoc extends EsDoc implements Serializable {
 		properties.put(_name, Collections.singletonMap("type", "text"));
 		properties.put(_mainProducts, new EsMappingProp("text").parameter("analyzer", "english"));
 		properties.put(_fullText, Collections.singletonMap("type", "text"));
+		properties.put(_rating, new EsMappingProp("integer"));
 		jsonMap.put("properties", properties);
 		return jsonMap;
 	}

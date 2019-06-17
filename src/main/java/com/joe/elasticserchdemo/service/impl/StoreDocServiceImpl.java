@@ -10,6 +10,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.joe.elasticsearchdemo.dto.AggregatedStoreDocPage;
+import com.joe.elasticsearchdemo.dto.Pageable;
 import com.joe.elasticserchdemo.document.StoreDoc;
 import com.joe.elasticserchdemo.service.StoreDocService;
 
@@ -38,7 +41,7 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse =
                 client.search(searchRequest, RequestOptions.DEFAULT);
-		return getSearchResult(searchResponse, StoreDoc.class);
+		return getContent(searchResponse, StoreDoc.class);
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		SearchResponse searchResponse =
                 client.search(searchRequest, RequestOptions.DEFAULT);
 		LOGGER.info("\n search(): searchContent [" + keyword + "] \n DSL  = \n " + searchSourceBuilder.query());
-		return getSearchResult(searchResponse,StoreDoc.class);
+		return getContent(searchResponse,StoreDoc.class);
 	}
 
 	@Override
@@ -79,8 +82,29 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		SearchResponse searchResponse =
                 client.search(searchRequest, RequestOptions.DEFAULT);
 		LOGGER.info("\n search(): searchContent [" + keyword + "] \n DSL  = \n " + searchSourceBuilder.query());
-		return getSearchResult(searchResponse,StoreDoc.class);
+		return getContent(searchResponse,StoreDoc.class);
 	}
+	
+	@Override
+	public AggregatedStoreDocPage aggregationSearch(String keyword, Pageable pageable) throws IOException {
+		SearchRequest searchRequest = new SearchRequest(StoreDoc.INDEX_NAME); 
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
+		searchSourceBuilder.query(QueryBuilders.matchQuery(StoreDoc._name, keyword)); 
+		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).highlighterType("plain"));
+		
+		searchRequest.source(searchSourceBuilder);
+		searchSourceBuilder.aggregation(AggregationBuilders.terms(StoreDoc._rating).field(StoreDoc._rating));
+		searchSourceBuilder.from((pageable.getPageNumber() - 1) * pageable.getPageSize()).size(pageable.getPageSize());
+		SearchResponse searchResponse =
+                client.search(searchRequest, RequestOptions.DEFAULT);
+		LOGGER.info("\n search(): searchContent [" + keyword + "] \n DSL  = \n " + searchSourceBuilder.query());
+		
+		List<StoreDoc> list = getContent(searchResponse, StoreDoc.class);
+		AggregatedStoreDocPage agg = new AggregatedStoreDocPage(list, searchResponse.getHits().getTotalHits(), pageable);
+		agg.setAggregations(searchResponse.getAggregations().asMap());		
+		return agg;
+	}
+
 //
 //	@Override
 //	public Page<StoreDoc> search(String keyword, Pageable pageable) {
@@ -173,5 +197,4 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 //		return page;
 //	}
 
-	
 }

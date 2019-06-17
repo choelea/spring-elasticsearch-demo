@@ -9,7 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.joe.elasticsearchdemo.dto.AggregatedStoreDocPage;
+import com.joe.elasticsearchdemo.dto.Pageable;
 import com.joe.elasticserchdemo.document.StoreDoc;
 import com.joe.elasticserchdemo.service.StoreDocService;
 
@@ -51,5 +54,12 @@ public class StorePageController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("page", page);
 		return "store/storeNamesConstantScore";
+	}
+	
+	@GetMapping("/search-aggregation")
+	@ResponseBody
+	public AggregatedStoreDocPage searchStoreAggregation(Model model, String keyword, Integer pageNumber, Integer pageSize) throws IOException {
+		
+		return storeDocService.aggregationSearch(keyword, new Pageable(pageNumber, pageSize));
 	}
 }

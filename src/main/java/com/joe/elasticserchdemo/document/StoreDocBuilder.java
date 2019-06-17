@@ -28,6 +28,10 @@ public class StoreDocBuilder {
 		storeDoc.setFullText(storeDoc.getName()+" "+storeDoc.getMainProducts());
 		return this;
 	}
+	public StoreDocBuilder rating(int rating) {
+		storeDoc.setRating(rating);
+		return this;
+	}
 	public IndexRequest buildIndex() {
 		IndexRequest indexRequest = new IndexRequest(StoreDoc.INDEX_NAME, StoreDoc.INDEX_TYPE);
 		indexRequest.id(storeDoc.getId().toString());

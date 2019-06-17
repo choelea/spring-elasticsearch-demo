@@ -34,12 +34,10 @@ public class ElasticsearchCommonServiceImpl<T extends EsDoc> implements Elastics
 		GetIndexRequest request = new GetIndexRequest(indexName); 
 		return client.indices().exists(request, RequestOptions.DEFAULT);
 	}
-	protected List<T> getSearchResult(SearchResponse response, Class<T> clazz) {
+	protected List<T> getContent(SearchResponse response, Class<T> clazz) {
 
         SearchHit[] searchHit = response.getHits().getHits();
-
         List<T> list = new ArrayList<>();
-
         for (SearchHit hit : searchHit){
         	T object = objectMapper.convertValue(hit.getSourceAsMap(), clazz);
         	object.setScore(hit.getScore());
@@ -49,6 +47,7 @@ public class ElasticsearchCommonServiceImpl<T extends EsDoc> implements Elastics
 
         return list;
     }
+	
 	protected void populateHighLightedFields(T result, Map<String, HighlightField> highlightFields) {
 		for (HighlightField field : highlightFields.values()) {
 			try {
