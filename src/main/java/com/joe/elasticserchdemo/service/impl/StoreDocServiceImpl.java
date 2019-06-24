@@ -67,14 +67,15 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		
 		BoolQueryBuilder boolQueryBuilder= QueryBuilders.boolQuery();
 		
-		String[] terms = keyword.split("\\s+");
-		float nameBoost = 1.0f/terms.length;
+		String[] terms = keyword.split(StoreDoc.TOKENIZER_PATTERN);
+		float nameBoost = 0.8f/terms.length;
+		float mainBoost = 0.2f/terms.length;
 		for (String term : terms) {			
-			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(StoreDoc._name, term)).boost(nameBoost));
+			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.termQuery(StoreDoc._name, term)).boost(nameBoost));
+			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.termQuery(StoreDoc._mainProducts, term)).boost(mainBoost));
 		}
-		searchSourceBuilder.query(boolQueryBuilder); 
-		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).highlighterType("plain"));
-		searchSourceBuilder.minScore(0.7f);
+		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).field(StoreDoc._mainProducts).highlighterType("plain"));
+		searchSourceBuilder.minScore(0.1f);
 		
 		searchRequest.source(searchSourceBuilder);
 		
@@ -88,12 +89,14 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 	@Override
 	public AggregatedStoreDocPage aggregationSearch(String keyword, Pageable pageable) throws IOException {
 		SearchRequest searchRequest = new SearchRequest(StoreDoc.INDEX_NAME); 
+		
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
 		searchSourceBuilder.query(QueryBuilders.matchQuery(StoreDoc._name, keyword)); 
 		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).highlighterType("plain"));
 		
 		searchRequest.source(searchSourceBuilder);
 		searchSourceBuilder.aggregation(AggregationBuilders.terms(StoreDoc._rating).field(StoreDoc._rating));
+		searchSourceBuilder.aggregation(AggregationBuilders.terms(StoreDoc._storeType).field(StoreDoc._storeType));
 		searchSourceBuilder.from((pageable.getPageNumber() - 1) * pageable.getPageSize()).size(pageable.getPageSize());
 		SearchResponse searchResponse =
                 client.search(searchRequest, RequestOptions.DEFAULT);

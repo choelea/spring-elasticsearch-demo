@@ -32,6 +32,11 @@ public class StoreDocBuilder {
 		storeDoc.setRating(rating);
 		return this;
 	}
+	
+	public StoreDocBuilder type(String type) {
+		storeDoc.setStoreType(type);
+		return this;
+	}
 	public IndexRequest buildIndex() {
 		IndexRequest indexRequest = new IndexRequest(StoreDoc.INDEX_NAME, StoreDoc.INDEX_TYPE);
 		indexRequest.id(storeDoc.getId().toString());
