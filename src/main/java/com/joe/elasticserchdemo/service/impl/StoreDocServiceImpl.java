@@ -8,8 +8,12 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.lucene.search.function.CombineFunction;
+import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -17,10 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException.Gone;
 
 import com.joe.elasticsearchdemo.dto.AggregatedStoreDocPage;
 import com.joe.elasticsearchdemo.dto.Pageable;
 import com.joe.elasticserchdemo.document.StoreDoc;
+import com.joe.elasticserchdemo.document.Type;
 import com.joe.elasticserchdemo.service.StoreDocService;
 
 @Service
@@ -67,13 +73,19 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		
 		BoolQueryBuilder boolQueryBuilder= QueryBuilders.boolQuery();
 		
-		String[] terms = keyword.split(StoreDoc.TOKENIZER_PATTERN);
+		String[] terms = keyword.toLowerCase().split(StoreDoc.TOKENIZER_PATTERN);
 		float nameBoost = 0.8f/terms.length;
 		float mainBoost = 0.2f/terms.length;
 		for (String term : terms) {			
 			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.termQuery(StoreDoc._name, term)).boost(nameBoost));
 			boolQueryBuilder.should(QueryBuilders.constantScoreQuery(QueryBuilders.termQuery(StoreDoc._mainProducts, term)).boost(mainBoost));
 		}
+		
+		boolQueryBuilder.must(QueryBuilders.termQuery(StoreDoc._storeType, Type.Golden));
+		FunctionScoreQueryBuilder functionscoreBuilder =  QueryBuilders.functionScoreQuery(boolQueryBuilder, ScoreFunctionBuilders.fieldValueFactorFunction(StoreDoc._rating).setWeight(0.1f))
+					.scoreMode(ScoreMode.SUM).boostMode(CombineFunction.SUM);
+		searchSourceBuilder.query(functionscoreBuilder);
+		
 		searchSourceBuilder.highlighter(new HighlightBuilder().field(StoreDoc._name).field(StoreDoc._mainProducts).highlighterType("plain"));
 		searchSourceBuilder.minScore(0.1f);
 		

@@ -39,6 +39,8 @@
 					<th>Id</th>
 					<th>Name</th>
 					<th>Main Products</th>
+					<th>Rating</th>
+					<th>Type</th>
 					<th>Score</th>
 				</tr>
 			</thead>
@@ -48,6 +50,8 @@
 			        <td th:text="${store.id}"></td>
 					<td th:utext="${store.name}"></td>
 					<td th:utext="${store.mainProducts}"></td>
+					<td th:utext="${store.rating}"></td>
+					<td th:utext="${store.storeType}"></td>
 					<td th:utext="${store.score}"></td>
 			    </tr>
 			</tbody>

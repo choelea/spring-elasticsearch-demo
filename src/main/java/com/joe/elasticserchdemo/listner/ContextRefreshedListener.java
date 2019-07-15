@@ -97,7 +97,7 @@ public class ContextRefreshedListener implements ApplicationListener<ContextRefr
 		request.add(new StoreDocBuilder(15l).rating(5).type(Type.Golden.name()).name("Charlice Fruit Shop").mainProducts("Pear, Watermelon").fullText().buildIndex());
 		request.add(new StoreDocBuilder(16l).rating(4).type(Type.Golden.name()).name("Jane's Mobile Shop").mainProducts("Smart-Phone").fullText().buildIndex());
 		request.add(new StoreDocBuilder(17l).rating(4).type(Type.Golden.name()).name("Charlise Shop").mainProducts("Smart Phone").fullText().buildIndex());
-		request.add(new StoreDocBuilder(18l).rating(4).type(Type.Golden.name()).name("Authorized Owned by Joe Phone Meizu Shop").mainProducts("Smart Phone;Stupid Phone,  85% is a 10279-57-9").fullText().buildIndex());		
+		request.add(new StoreDocBuilder(18l).rating(4).type(Type.Normal.name()).name("Authorized Owned by Joe Phone Meizu Shop").mainProducts("Smart Phone;Stupid Phone,  85% is a 10279-57-9").fullText().buildIndex());		
 		request.add(new StoreDocBuilder(19l).rating(4).type(Type.Golden.name()).name("Meizu Authorized Phone Shop Located in Wuhan Optic Valley Software Park").mainProducts("Smart Phone").fullText().buildIndex());
 		request.add(new StoreDocBuilder(20l).rating(4).type(Type.Golden.name()).name("Authorized Phone Meizu Shop").mainProducts("Smart Phone").fullText().buildIndex());
 		for(int i=21; i<30; i++) {
