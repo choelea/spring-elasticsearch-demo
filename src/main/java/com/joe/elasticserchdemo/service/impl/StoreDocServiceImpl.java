@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException.Gone;
 
 import com.joe.elasticsearchdemo.dto.AggregatedStoreDocPage;
 import com.joe.elasticsearchdemo.dto.Pageable;
@@ -115,7 +114,7 @@ public class StoreDocServiceImpl extends ElasticsearchCommonServiceImpl<StoreDoc
 		LOGGER.info("\n search(): searchContent [" + keyword + "] \n DSL  = \n " + searchSourceBuilder.query());
 		
 		List<StoreDoc> list = getContent(searchResponse, StoreDoc.class);
-		AggregatedStoreDocPage agg = new AggregatedStoreDocPage(list, searchResponse.getHits().getTotalHits(), pageable);
+		AggregatedStoreDocPage agg = new AggregatedStoreDocPage(list, searchResponse.getHits().getTotalHits().value, pageable);
 		agg.setAggregations(searchResponse.getAggregations().asMap());		
 		return agg;
 	}
