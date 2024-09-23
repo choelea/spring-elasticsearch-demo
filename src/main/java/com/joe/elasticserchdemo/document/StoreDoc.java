@@ -105,8 +105,8 @@ public class StoreDoc extends EsDoc implements Serializable {
 		Map<String, Object> jsonMap = new HashMap<>();
 				
 		Map<String, Object> properties = new HashMap<>();
-		properties.put(_name, new EsMappingProp("text").parameter("analyzer", "chem_analyzer_en"));
-		properties.put(_mainProducts, new EsMappingProp("text").parameter("analyzer", "chem_analyzer_en"));
+//		properties.put(_name, new EsMappingProp("text").parameter("analyzer", "chem_analyzer_en"));
+//		properties.put(_mainProducts, new EsMappingProp("text").parameter("analyzer", "chem_analyzer_en"));
 		properties.put(_fullText, Collections.singletonMap("type", "text"));
 		properties.put(_rating, new EsMappingProp("integer"));
 		properties.put(_storeType, new EsMappingProp("keyword"));
